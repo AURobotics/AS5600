@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Arduino.h"
+// #include "Arduino.h"
 #include "Wire.h"
 
 #define baseAddress 0x36
@@ -11,5 +11,6 @@ public:
     As5600(TwoWire *wire = &Wire);
 
     void magnetPresence();
-    void rawAngle();
+    float rawAngle();
+    void checkQuadrant();
 }
