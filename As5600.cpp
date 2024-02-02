@@ -49,15 +49,14 @@ void As5600::magnetPresence()
     // MD: OK magnet - 110111 - DEC: 55
 }
 
-float As5600::rawAngle()
+float As5600::rawAngle(float startAngle)
 {
     int lowbyte;
     int highbyte;
     int rawAngle;
     float degAngle;
-    float correctedAngle = 0;
-    float startAngle = 0;
-
+    
+    
     Wire.beginTransmission(baseAddress); // connection starts at the base address
     Wire.write(rowAngleLOW);             // row angle address (7:0)
     Wire.endTransmission();              // end transmission
@@ -88,15 +87,15 @@ float As5600::rawAngle()
 
     // 12 bit -> 4096 different levels: 360 is divided into 4096 equal parts:
     degAngle = rawAngle * 0.087890625; // 360/4096 = 0.087890625
-
+    correctedAngle = degAngle - startAngle; // tares the position
+    
     if (correctedAngle < 0) // if the calculated angle is negative, we need to normalize it
     {
         correctedAngle = correctedAngle + 360;  // correction for negative numbers
-        correctedAngle = degAngle - startAngle; // tares the position
     }
-    else
+    else if (correctedAngle > 360) 
     {
-        correctedAngle = rawAngle;
+        correctedAngle = correctedAngle - 360;  // correction for negative numbers
     }
     return correctedAngle;
 }
